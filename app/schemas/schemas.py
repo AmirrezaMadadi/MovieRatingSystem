@@ -1,17 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 
 class GenreBase(BaseModel):
     id: int
     name: str
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class DirectorBase(BaseModel):
     id: int
     name: str
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class RatingCreate(BaseModel):
     score: int
@@ -23,14 +21,14 @@ class MovieBase(BaseModel):
 
 class MovieCreate(MovieBase):
     director_id: int
-    genres: List[int]
+    genres: List[int]  
 
 class MovieResponse(MovieBase):
     id: int
+    director_id: int
     director: DirectorBase
     genres: List[GenreBase]
-    average_rating: Optional[float] = 0.0
-    ratings_count: Optional[int] = 0
+    average_rating: float = 0.0
+    ratings_count: int = 0
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

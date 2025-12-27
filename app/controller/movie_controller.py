@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.services.movie_service import MovieService
 from app.schemas.schemas import MovieResponse, MovieCreate, RatingCreate
-from typing import Optional
+from typing import Optional, List, Any, Dict
 
 router = APIRouter(prefix="/api/v1/movies", tags=["Movies"])
 
-@router.get("/", response_model=dict) # API 1 & 2
+@router.get("/") 
 def get_movies(
     page: int = 1,
     page_size: int = 10,
@@ -20,8 +20,8 @@ def get_movies(
     result = service.get_all_movies(page, page_size, title, release_year, genre)
     return {"status": "success", "data": result}
 
-@router.get("/{movie_id}", response_model=dict) # API 3
+@router.get("/{movie_id}") 
 def get_movie(movie_id: int, db: Session = Depends(get_db)):
     service = MovieService(db)
     movie = service.get_movie_detail(movie_id)
-    return {"status": "success", "data": movie}
+    return {"status": "success", "data": MovieResponse.model_validate(movie)}
