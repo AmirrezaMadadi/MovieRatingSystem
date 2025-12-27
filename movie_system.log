@@ -1,0 +1,7 @@
+2025-12-28 01:11:32,518 - app.controller.movie_controller - INFO - Incoming GET request to /movies | Filters: title=None, year=None, genre=None, page=1
+2025-12-28 01:11:32,519 - app.services.movie_service - INFO - Fetching movies: page=1, size=10, filter_title='None'
+2025-12-28 01:11:32,544 - app.services.movie_service - INFO - Successfully retrieved 4 movies out of 4
+2025-12-28 01:11:32,545 - app.controller.movie_controller - INFO - Successfully returned movie list for page 1
+2025-12-28 01:15:36,495 - app.controller.movie_controller - INFO - Incoming GET request for movie details | movie_id: 4
+2025-12-28 01:15:36,495 - app.services.movie_service - INFO - Detail request for movie_id: 4
+2025-12-28 01:15:36,498 - app.services.movie_service - WARNING - Movie with id 4 not found in database

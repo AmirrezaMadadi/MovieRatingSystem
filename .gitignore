@@ -13,3 +13,4 @@ app/schemas/__pycache__/__init__.cpython-311.pyc
 app/schemas/__pycache__/schemas.cpython-311.pyc
 app/services/__pycache__/__init__.cpython-311.pyc
 app/services/__pycache__/movie_service.cpython-311.pyc
+app/core/__pycache__/logging_config.cpython-311.pyc
