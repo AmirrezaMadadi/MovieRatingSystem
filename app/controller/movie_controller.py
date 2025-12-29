@@ -56,3 +56,27 @@ def rate_movie(movie_id: int, rating: RatingCreate, db: Session = Depends(get_db
     
     logger.info(f"Rating submitted successfully for movie_id {movie_id}")
     return {"status": "success", "data": {"rating_id": result.id, "score": result.score}}
+
+@router.post("/", status_code=status.HTTP_201_CREATED)
+def create_movie(movie: MovieCreate, db: Session = Depends(get_db)):
+    service = MovieService(db)
+    new_movie = service.create_new_movie(movie)
+    return {"status": "success", "data": MovieResponse.model_validate(new_movie)}
+
+@router.put("/{movie_id}")
+def update_movie(movie_id: int, movie: MovieCreate, db: Session = Depends(get_db)):
+    service = MovieService(db)
+    updated = service.update_existing_movie(movie_id, movie)
+    return {"status": "success", "data": MovieResponse.model_validate(updated)}
+
+@router.delete("/{movie_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_movie(movie_id: int, db: Session = Depends(get_db)):
+    service = MovieService(db)
+    service.delete_movie(movie_id)
+    return
+
+@router.post("/{movie_id}/ratings", status_code=status.HTTP_201_CREATED)
+def rate_movie(movie_id: int, rating: RatingCreate, db: Session = Depends(get_db)):
+    service = MovieService(db)
+    new_rating = service.add_rating_to_movie(movie_id, rating)
+    return {"status": "success", "data": {"rating_id": new_rating.id, "score": new_rating.score}}
