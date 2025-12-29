@@ -31,28 +31,47 @@ class MovieRepository:
         ).filter(Rating.movie_id == movie_id).first()
         return result
 
-    def create_movie(self, movie_data, genres: list[Genre]):
+    def create_movie(self, movie_data: dict, genre_ids: list):
         db_movie = Movie(**movie_data)
-        db_movie.genres = genres
+        
+        if genre_ids:
+            db_genres = self.db.query(Genre).filter(Genre.id.in_(genre_ids)).all()
+            
+            db_movie.genres = db_genres
+        
         self.db.add(db_movie)
         self.db.commit()
         self.db.refresh(db_movie)
         return db_movie
 
-    def update_movie(self, movie: Movie, update_data: dict, new_genres: list[Genre] = None):
-        for key, value in update_data.items():
-            setattr(movie, key, value)
-
-        if new_genres is not None:
-            movie.genres = new_genres
+    def update_movie(self, movie_id: int, movie_data: dict, genre_ids: list):
+        db_movie = self.db.query(Movie).filter(Movie.id == movie_id).first()
+        if not db_movie:
+            return None
+        
+        for key, value in movie_data.items():
+            setattr(db_movie, key, value)
+        
+        if genre_ids is not None:
+            db_genres = self.db.query(Genre).filter(Genre.id.in_(genre_ids)).all()
+            db_movie.genres = db_genres
 
         self.db.commit()
-        self.db.refresh(movie)
-        return movie
+        self.db.refresh(db_movie)
+        return db_movie
 
-    def delete_movie(self, movie: Movie):
-        self.db.delete(movie)
-        self.db.commit()
+    def delete_movie(self, movie_id: int):
+        db_movie = self.db.query(Movie).filter(Movie.id == movie_id).first()
+        if not db_movie:
+            return False
+        
+        try:
+            self.db.delete(db_movie)
+            self.db.commit()
+            return True
+        except Exception as e:
+            self.db.rollback()
+            raise e
 
     def add_rating(self, movie_id: int, score: int):
         rating = Rating(movie_id=movie_id, score=score)
