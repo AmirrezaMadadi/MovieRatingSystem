@@ -30,3 +30,35 @@ class MovieRepository:
             func.count(Rating.id)
         ).filter(Rating.movie_id == movie_id).first()
         return result
+
+    def create_movie(self, movie_data, genres: list[Genre]):
+        db_movie = Movie(**movie_data)
+        db_movie.genres = genres
+        self.db.add(db_movie)
+        self.db.commit()
+        self.db.refresh(db_movie)
+        return db_movie
+
+    def update_movie(self, movie: Movie, update_data: dict, new_genres: list[Genre] = None):
+        for key, value in update_data.items():
+            setattr(movie, key, value)
+
+        if new_genres is not None:
+            movie.genres = new_genres
+
+        self.db.commit()
+        self.db.refresh(movie)
+        return movie
+
+    def delete_movie(self, movie: Movie):
+        self.db.delete(movie)
+        self.db.commit()
+
+    def add_rating(self, movie_id: int, score: int):
+        rating = Rating(movie_id=movie_id, score=score)
+        self.db.add(rating)
+        self.db.commit()
+        return rating
+
+    def get_genres_by_ids(self, genre_ids: list[int]):
+        return self.db.query(Genre).filter(Genre.id.in_(genre_ids)).all()
